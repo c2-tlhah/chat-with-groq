@@ -3,7 +3,7 @@ import streamlit as st
 from streamlit.components.v1 import html
 import os
 # set up your API key
-api_key = "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"
+api_key = "YOUR_API_KEY_HERE"
 client = Groq(api_key=api_key)
 
 # Set up the Streamlit interface

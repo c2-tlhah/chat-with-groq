@@ -91,8 +91,4 @@ If you want to contribute to this project, follow these steps:
     Push to the branch: git push origin feature-branch.
     Submit a pull request.
 
-License
-
-This project is licensed under the MIT License. See the LICENSE file for details.
-Acknowledgments
 

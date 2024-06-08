@@ -1,2 +1,2 @@
-streamlib
+streamlit
 groq

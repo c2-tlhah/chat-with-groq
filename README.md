@@ -1,4 +1,3 @@
-# chat-with-groq
 # AI Chat with GROQ
 
 This project is a Streamlit web application that allows users to interact with an AI model from GROQ. The application provides a simple and intuitive interface for users to enter prompts and receive responses from the AI.

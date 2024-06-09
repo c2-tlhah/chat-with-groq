@@ -1,9 +1,8 @@
-from groq import Groq
 import streamlit as st
-from streamlit.components.v1 import html
-import os
-# set up your API key
-api_key = "YOUR_API_KEY_HERE"
+from groq import Groq
+
+# Set up your API key
+api_key = "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"
 client = Groq(api_key=api_key)
 
 # Set up the Streamlit interface
@@ -13,7 +12,7 @@ st.markdown("""
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #f0f2f6;
+            background-color: #ffffff;
             color: #333333;
         }
         .css-18e3th9 {
@@ -28,6 +27,7 @@ st.markdown("""
             color: white !important;
             font-size: 1.1rem;
             padding: 0.75rem 1.5rem;
+            border-radius: 5px;
         }
         .css-6awftf span {
             display: none;
@@ -38,16 +38,19 @@ st.markdown("""
             color: white !important;
             font-size: 1rem;
             padding: 0.5rem 1rem;
+            border-radius: 5px;
         }
         .stTextInput input {
-            background-color: #ffffff;
+            background-color: #f9f9f9;
             border: 1px solid #4CAF50;
             padding: 0.5rem;
             font-size: 1rem;
             width: 100%;
+            border-radius: 5px;
+            color: #333333; /* Ensure the text is visible */
         }
         .stMarkdown h2 {
-            color: #4CAF50;
+            color: #333333;
         }
         .css-1k0ckh2 {
             display: flex;
@@ -60,30 +63,32 @@ st.markdown("""
             flex-direction: column;
             justify-content: space-between;
             align-items: flex-start;
-            background-color: #ffffff;
+            background-color: #f9f9f9;
             padding: 1rem;
             border-radius: 8px;
             box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
         }
         .user-message {
-            background-color: #e0e0e0;
+            background-color: #e0f7fa;
             border-radius: 8px;
             padding: 8px 12px;
             margin-bottom: 8px;
+            color: #333333;
         }
         .ai-message {
-            background-color: #c1e6f7;
+            background-color: #ffecb3;
             border-radius: 8px;
             padding: 8px 12px;
             margin-bottom: 8px;
+            color: #333333;
         }
     </style>
 """, unsafe_allow_html=True)
 
-st.markdown("<h1 style='text-align: center; color: green;'>Chat with GROQ</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center; color: #4CAF50;'>Chat with GROQ</h1>", unsafe_allow_html=True)
 
 # Sidebar for model selection
-st.sidebar.markdown("<h2 style='color: gold;'>Model Selection</h2>", unsafe_allow_html=True)
+st.sidebar.markdown("<h2 style='color: #4CAF50;'>Model Selection</h2>", unsafe_allow_html=True)
 models = ['llama3-8b-8192', 'llama3-70b-8192', 'mixtral-8x7b-32768', 'gemma-7b-it']
 model = st.sidebar.selectbox("Select a model", models)
 
@@ -92,9 +97,38 @@ if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 if "input_key" not in st.session_state:
     st.session_state.input_key = "input_1"
+if "document_content" not in st.session_state:
+    st.session_state.document_content = ""
+
+# File uploader for document
+st.markdown("<h2 style='color: #4CAF50;'>Upload a document:</h2>", unsafe_allow_html=True)
+uploaded_file = st.file_uploader("Choose a file", type=["txt", "pdf", "docx"])
+
+# Function to read the uploaded file
+def read_file(file):
+    import PyPDF2
+    import docx
+
+    if file.type == "application/pdf":
+        pdf_reader = PyPDF2.PdfFileReader(file)
+        text = ""
+        for page in range(pdf_reader.numPages):
+            text += pdf_reader.getPage(page).extract_text()
+    elif file.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+        doc = docx.Document(file)
+        text = "\n".join([para.text for para in doc.paragraphs])
+    elif file.type == "text/plain":
+        text = str(file.read(), "utf-8")
+    else:
+        text = ""
+    return text
+
+if uploaded_file is not None:
+    st.session_state.document_content = read_file(uploaded_file)
+    st.success("File uploaded successfully!")
 
 # Input form
-st.markdown("<h2 style='color: yellow;'>Enter your prompt below:</h2>", unsafe_allow_html=True)
+st.markdown("<h2 style='color: #4CAF50;'>Enter your prompt below:</h2>", unsafe_allow_html=True)
 user_input = st.text_input("Prompt:", key=st.session_state.input_key, placeholder="Type your message here...")
 
 # Display the submit button and handle its action
@@ -102,11 +136,13 @@ if st.button("Send"):
     if user_input.strip():
         with st.spinner("Waiting for AI response..."):
             try:
+                # Combine document content with the user's prompt
+                combined_prompt = st.session_state.document_content + "\n\n" + user_input
                 chat_completion = client.chat.completions.create(
                     messages=[
                         {
                             "role": "user",
-                            "content": user_input,
+                            "content": combined_prompt,
                         }
                     ],
                     model=model,
@@ -136,4 +172,3 @@ if st.session_state.chat_history:
             st.markdown(f"<div class='ai-message'>{chat['content']}</div>", unsafe_allow_html=True)
 else:
     st.info("Start a conversation by entering a prompt above!")
-

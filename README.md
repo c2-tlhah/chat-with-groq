@@ -51,11 +51,11 @@ Before you begin, ensure you have met the following requirements:
 
 3. Open your web browser and go to the local URL provided by Streamlit (usually `http://localhost:8501`).
 
-This line configures the Streamlit page with a title, icon, and layout.
-Custom CSS for Styling
+## Custom CSS for Styling
 
-python
+This line configures the Streamlit page with a title, icon, and layout. Below is the custom CSS to style the web interface:
 
+```python
 st.markdown("""
     <style>
         body { font-family: 'Arial', sans-serif; background-color: #f0f2f6; color: #333333; }
@@ -77,9 +77,6 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-This block adds custom CSS to style the web interface.
-
-...
 Contributing
 
 If you want to contribute to this project, follow these steps:
@@ -90,4 +87,4 @@ If you want to contribute to this project, follow these steps:
     Push to the branch: git push origin feature-branch.
     Submit a pull request.
 
-
+#AI #Chatbot #Streamlit #GROQ #MachineLearning #DocumentProcessing #TechInnovation #Python #ConversationalAI #ArtificialIntelligence
